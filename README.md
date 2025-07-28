@@ -26,7 +26,7 @@ pnpm install
 
 ```bash
 pnpm start
-# 或 node src/simple-mcp-server.ts
+# 或 node src/index.ts
 ```
 
 - 默认监听 3000 端口，可通过 `PORT=xxxx` 环境变量自定义端口。

@@ -33,12 +33,3 @@ export interface SearchResult {
   score: number;
   reason: string;
 }
-
-export interface IndexStats {
-  totalComponents: number;
-  totalHooks: number;
-  totalUtilities: number;
-  totalTypes: number;
-  lastUpdated: Date;
-  indexedFiles: number;
-}

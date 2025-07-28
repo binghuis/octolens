@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { join, relative } from "path";
 import { glob } from "glob";
-import { ComponentIndex, IndexConfig, SearchResult } from "./types.js";
+import { ComponentIndex, IndexConfig, SearchResult } from "./types";
 
 export class ComponentIndexer {
   private components: Map<string, ComponentIndex> = new Map();

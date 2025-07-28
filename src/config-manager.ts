@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { join } from "path";
-import { IndexConfig } from "./types.js";
+import { IndexConfig } from "./types";
 
 export class ConfigManager {
   private configPath: string;
