@@ -1,0 +1,36 @@
+{
+  "rootPath": ".",
+  "includePatterns": ["**/*.{ts,tsx,js,jsx}"],
+  "excludePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/.git/**",
+    "**/build/**",
+    "**/.next/**",
+    "**/coverage/**"
+  ],
+  "componentPaths": [
+    "src/components/**/*.{ts,tsx}",
+    "components/**/*.{ts,tsx}",
+    "src/ui/**/*.{ts,tsx}",
+    "ui/**/*.{ts,tsx}"
+  ],
+  "hookPaths": [
+    "src/hooks/**/*.{ts,tsx}",
+    "hooks/**/*.{ts,tsx}",
+    "src/lib/hooks/**/*.{ts,tsx}"
+  ],
+  "utilityPaths": [
+    "src/utils/**/*.{ts,tsx}",
+    "utils/**/*.{ts,tsx}",
+    "src/lib/**/*.{ts,tsx}",
+    "lib/**/*.{ts,tsx}"
+  ],
+  "typePaths": [
+    "src/types/**/*.{ts,tsx}",
+    "types/**/*.{ts,tsx}",
+    "src/@types/**/*.{ts,tsx}"
+  ],
+  "autoWatch": true,
+  "indexFile": ".structor-index.json"
+}
