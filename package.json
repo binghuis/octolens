@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "OctoLens - 智能项目结构分析工具 (Monorepo)",
   "private": true,
+  "type": "module",
   "packageManager": "pnpm@8.0.0",
   "workspaces": [
     "packages/*"
@@ -32,6 +33,7 @@
     "@changesets/cli": "^2.29.5",
     "@types/node": "^24.1.0",
     "@vitest/ui": "^3.2.4",
+    "execa": "^9.6.0",
     "tsup": "^8.5.0",
     "turbo": "^2.5.5",
     "typescript": "^5.8.3",

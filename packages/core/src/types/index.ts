@@ -107,13 +107,6 @@ export interface ScannerPlugin {
   scan(config: ScanConfig): Promise<Partial<ScanResult>>;
 }
 
-export interface EditorPlugin {
-  name: string;
-  version: string;
-  validate(config: ScanConfig): boolean;
-  integrate(config: ScanConfig): Promise<void>;
-}
-
 export interface AIProvider {
   name: string;
   version: string;

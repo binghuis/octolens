@@ -4,12 +4,7 @@ export { ProjectScanner } from "./core/scanner.js";
 export { ProjectWatcher } from "./core/watcher.js";
 export { LocalAIProvider } from "./ai/local-ai-provider.js";
 export { MCPServer } from "./mcp/server.js";
-export {
-  PluginRegistry,
-  BaseScannerPlugin,
-  BaseEditorPlugin,
-  BaseAIProvider,
-} from "./plugins/base.js";
+export { BaseScannerPlugin, BaseAIProvider } from "./plugins/base.js";
 
 // 导出类型
 export type {
@@ -24,6 +19,5 @@ export type {
   MCPToolArgs,
   PluginConfig,
   ScannerPlugin,
-  EditorPlugin,
   AIProvider,
 } from "./types/index.js";

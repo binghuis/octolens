@@ -2,91 +2,36 @@ import { OctoLens } from "@octolens/core";
 import type { ScanConfig } from "@octolens/core";
 
 // 解析命令行参数
-function parseArgs(): ScanConfig {
+function parseArgs(): ScanConfig & { noWatch?: boolean } {
   const args = process.argv.slice(2);
-  const config: Partial<ScanConfig> = {
+  const config: any = {
     rootPath: process.cwd(),
-    ignorePatterns: ["node_modules", "dist", ".git"],
-    maxDepth: 10,
-    enableAI: true,
+    maxDepth: 5,
+    enableAI: false,
+    ignorePatterns: [],
+    noWatch: false,
   };
-
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    const nextArg = args[i + 1];
-
-    switch (arg) {
-      case "-h":
-      case "--help":
-        showHelp();
-        process.exit(0);
-        break;
-
-      case "-v":
-      case "--version":
-        showVersion();
-        process.exit(0);
-        break;
-
-      case "-p":
-      case "--path":
-        if (nextArg) {
-          config.rootPath = nextArg;
-          i++;
-        }
-        break;
-
-      case "-i":
-      case "--ignore":
-        if (nextArg) {
-          config.ignorePatterns = nextArg.split(",").map((s) => s.trim());
-          i++;
-        }
-        break;
-
-      case "--include":
-        if (nextArg) {
-          config.includePatterns = nextArg.split(",").map((s) => s.trim());
-          i++;
-        }
-        break;
-
-      case "--max-depth":
-        if (nextArg) {
-          const depth = parseInt(nextArg, 10);
-          if (!isNaN(depth)) {
-            config.maxDepth = depth;
-          }
-          i++;
-        }
-        break;
-
-      case "--enable-ai":
-        if (nextArg) {
-          config.enableAI = nextArg.toLowerCase() === "true";
-          i++;
-        }
-        break;
-
-      case "--ai-provider":
-        if (nextArg) {
-          config.aiConfig = {
-            ...config.aiConfig,
-            model: nextArg === "ollama" ? "llama3.2:3b" : nextArg,
-          };
-          i++;
-        }
-        break;
-
-      default:
-        if (!arg.startsWith("-")) {
-          config.rootPath = arg;
-        }
-        break;
+    if (arg === "--rootPath" && args[i + 1]) {
+      config.rootPath = args[++i];
+    } else if (arg === "--maxDepth" && args[i + 1]) {
+      config.maxDepth = parseInt(args[++i], 10);
+    } else if (arg === "--enableAI") {
+      config.enableAI = true;
+    } else if (arg === "--ignore" && args[i + 1]) {
+      config.ignorePatterns.push(args[++i]);
+    } else if (arg === "--no-watch") {
+      config.noWatch = true;
+    } else if (arg === "-h" || arg === "--help") {
+      showHelp();
+      process.exit(0);
+    } else if (arg === "-v" || arg === "--version") {
+      showVersion();
+      process.exit(0);
     }
   }
-
-  return config as ScanConfig;
+  return config;
 }
 
 // 显示帮助信息
@@ -170,6 +115,11 @@ async function main(): Promise<void> {
       await octolens.stop();
       process.exit(0);
     });
+
+    if (config.noWatch) {
+      await octolens.stop();
+      process.exit(0);
+    }
   } catch (error) {
     console.error("Error:", error);
     process.exit(1);
