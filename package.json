@@ -1,32 +1,44 @@
 {
-  "name": "structor",
+  "name": "octolens-monorepo",
   "version": "1.0.0",
-  "description": "Cursor MCP tool for component and utility indexing",
-  "main": "dist/index.js",
-  "type": "module",
+  "description": "OctoLens - 智能项目结构分析工具 (Monorepo)",
+  "private": true,
+  "packageManager": "pnpm@8.0.0",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "start": "node src/index.ts"
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "test": "turbo test",
+    "clean": "turbo clean",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "publish": "turbo publish",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "turbo build && changeset publish"
   },
   "keywords": [
-    "cursor",
+    "octolens",
+    "project-analysis",
+    "ai",
     "mcp",
-    "component",
-    "indexing",
-    "ai"
+    "monorepo"
   ],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@fastify/cors": "^11.0.1",
-    "@modelcontextprotocol/sdk": "^1.17.0",
-    "chokidar": "^4.0.3",
-    "fastify": "^5.4.0",
-    "glob": "^11.0.3",
-    "tsx": "^4.20.3",
-    "typescript": "^5.8.3",
-    "zod": "3"
-  },
+  "author": "OctoLens Team",
+  "license": "MIT",
   "devDependencies": {
-    "@types/node": "^24.1.0"
+    "@changesets/cli": "^2.29.5",
+    "@types/node": "^24.1.0",
+    "@vitest/ui": "^3.2.4",
+    "tsup": "^8.5.0",
+    "turbo": "^2.5.5",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4",
+    "zod": "^3.25.76"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

@@ -1,0 +1,37 @@
+{
+  "name": "@octolens/plugin-nextjs",
+  "version": "1.0.0",
+  "description": "OctoLens Next.js 项目扫描插件",
+  "main": "dist/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@octolens/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "tsup": "^8.0.0"
+  },
+  "keywords": [
+    "octolens",
+    "nextjs",
+    "plugin",
+    "scanner"
+  ],
+  "author": "OctoLens Team",
+  "license": "MIT"
+}

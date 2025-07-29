@@ -13,6 +13,10 @@ out/
 .nuxt/
 .vuepress/dist/
 
+# Monorepo specific
+.turbo/
+.pnpm-store/
+
 # Environment variables
 .env
 .env.local
@@ -37,11 +41,15 @@ ehthumbs.db
 Thumbs.db
 
 # Logs
-logs/
+logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
 
 # Runtime data
-pids/
+pids
 *.pid
 *.seed
 *.pid.lock
@@ -51,7 +59,7 @@ coverage/
 *.lcov
 
 # nyc test coverage
-.nyc_output/
+.nyc_output
 
 # Dependency directories
 jspm_packages/
@@ -81,14 +89,51 @@ jspm_packages/
 .cache
 .parcel-cache
 
-# Structor specific files
-.structor-index.json
-.structor-cache/
-.structor-logs/
+# Next.js build output
+.next
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
 
 # TypeScript cache
 *.tsbuildinfo
 
-# Temporary files
-tmp/
-temp/ 
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Changesets
+.changeset/*.md
+!.changeset/config.json
+
+# AI model files (if any)
+*.gguf
+*.bin
+models/
+
+# Test outputs
+test-results/
+playwright-report/
+test-results.xml
+
+# Local development
+.local/

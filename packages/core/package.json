@@ -1,0 +1,40 @@
+{
+  "name": "@octolens/core",
+  "version": "2.0.0",
+  "description": "OctoLens 核心功能包",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "chokidar": "^3.5.3",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "tsup": "^8.0.0"
+  },
+  "keywords": [
+    "octolens",
+    "project-analysis",
+    "ai",
+    "mcp"
+  ],
+  "author": "OctoLens Team",
+  "license": "MIT"
+}

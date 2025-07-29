@@ -1,0 +1,39 @@
+{
+  "name": "@octolens/cli",
+  "version": "2.0.0",
+  "description": "OctoLens 命令行工具",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "octolens": "dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@octolens/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "tsup": "^8.0.0"
+  },
+  "keywords": [
+    "octolens",
+    "cli",
+    "project-analysis"
+  ],
+  "author": "OctoLens Team",
+  "license": "MIT"
+}
