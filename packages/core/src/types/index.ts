@@ -28,6 +28,10 @@ export interface NodeMetadata {
   framework?: string;
 }
 
+// 导出新的项目元信息类型
+export * from "./project-metadata";
+
+// 保持向后兼容的旧接口
 export interface ProjectMetadata {
   name: string;
   version?: string;
