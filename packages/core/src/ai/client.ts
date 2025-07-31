@@ -1,7 +1,11 @@
 import { ChatDeepSeek } from "@langchain/deepseek";
-import { ProjectMetadataSchema } from "../types/project-metadata";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import {
+  ProjectMetadataSchema,
+  type ProjectMetadata,
+} from "../types/project-metadata";
+import { getProjectMetadataPrompt } from "../prompts/project-analysis.js";
+import { getProjectMetadata } from "../utils/project-reader.js";
+import type { Runnable } from "@langchain/core/runnables";
 
 enum DeepSeekModel {
   // 聊天模型
@@ -19,22 +23,14 @@ const model = new ChatDeepSeek({
   streaming: false,
 });
 
-export const structuredModel = model.withStructuredOutput(
+export const structuredModel: Runnable = model.withStructuredOutput(
   ProjectMetadataSchema
 );
 
-const prompt = ChatPromptTemplate.fromMessages([
-  new SystemMessage(
-    `分析以下项目文件，提取对 AI 编程最有价值的信息。
+const { packageJson, readme } = getProjectMetadata();
 
-Package.json: {packageJson}
-README: {readme}`
-  ),
-  new HumanMessage("{input}"),
-]);
+const prompt = getProjectMetadataPrompt(packageJson, readme);
 
-const chain = prompt.pipe(structuredModel);
-
-const result = await chain.invoke({ input: "Hello, how are you?" });
+const result = await structuredModel.invoke(prompt);
 
 console.log(result);
