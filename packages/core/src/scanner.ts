@@ -6,16 +6,10 @@ import type {
 } from "./types";
 import { validateConfig, getConfig } from "./config";
 import { logger } from "./utils/logger";
-import { PerformanceTracker } from "./utils/performance-tracker";
-import {
-  getProjectMetadata,
-  analyzeProjectStructure,
-} from "./utils/project-reader";
-import {
-  collectAndSortFiles,
-  buildDynamicBatches,
-} from "./utils/file-processor";
-import { DEFAULT_ANALYSIS_OPTIONS } from "./utils/default-options";
+import { PerformanceTracker } from "./utils/performance";
+import { getProjectMetadata, analyzeProjectStructure } from "./utils/project";
+import { collectAndSortFiles, buildDynamicBatches } from "./utils/files";
+import { DEFAULT_ANALYSIS_OPTIONS } from "./utils/options";
 import { pluginManager } from "./plugins";
 
 /**

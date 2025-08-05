@@ -1,108 +1,240 @@
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import {
+  ListToolsRequestSchema,
+  CallToolRequestSchema,
+  type ListToolsRequest,
+  type CallToolRequest,
+  type Tool,
+} from "@modelcontextprotocol/sdk/types.js";
 import type { ScanResult, ScanConfig } from "../types";
+import { OctoLensScanner } from "../scanner";
+import { logger } from "../utils/logger";
 
-// MCP 服务器接口
-export interface MCPServer {
-  // 项目分析相关
-  scanProject(config: ScanConfig): Promise<ScanResult>;
-  getProjectStructure(rootPath: string): Promise<any>;
-  getFileAnalysis(filePath: string): Promise<any>;
-
-  // 实时更新
-  watchProject(rootPath: string): Promise<void>;
-  stopWatching(): Promise<void>;
-
-  // 插件管理
-  listPlugins(): Promise<string[]>;
-  enablePlugin(name: string): Promise<void>;
-  disablePlugin(name: string): Promise<void>;
-}
-
-// MCP 客户端接口
-export interface MCPClient {
-  // 连接管理
-  connect(): Promise<void>;
-  disconnect(): Promise<void>;
-
-  // 请求方法
-  request(method: string, params: any): Promise<any>;
-
-  // 通知方法
-  notify(method: string, params: any): Promise<void>;
+// MCP 工具定义
+export interface OctoLensTool extends Tool {
+  name: string;
+  description: string;
+  inputSchema: any;
 }
 
 // MCP 服务器实现
-export class OctoLensMCPServer implements MCPServer {
+export class OctoLensMCPServer {
+  private server: Server;
+  private scanner: OctoLensScanner;
   private isWatching = false;
 
   constructor() {
-    // TODO: 初始化 MCP 服务器
+    this.scanner = new OctoLensScanner();
+    this.server = new Server(
+      {
+        name: "octolens-server",
+        version: "1.0.0",
+      },
+      {
+        capabilities: {
+          tools: {},
+        },
+      }
+    );
+
+    this.setupHandlers();
   }
 
-  async scanProject(config: ScanConfig): Promise<ScanResult> {
-    // TODO: 实现项目扫描逻辑
-    throw new Error("Not implemented");
+  private setupHandlers() {
+    // 工具列表
+    this.server.setRequestHandler(ListToolsRequestSchema, async () => {
+      return {
+        tools: [
+          {
+            name: "scan_project",
+            description: "扫描和分析项目结构",
+            inputSchema: {
+              type: "object",
+              properties: {
+                rootPath: { type: "string" },
+                maxDepth: { type: "number" },
+                enableAI: { type: "boolean" },
+                ignorePatterns: { type: "array", items: { type: "string" } },
+              },
+              required: ["rootPath"],
+            },
+          },
+          {
+            name: "analyze_file",
+            description: "分析单个文件",
+            inputSchema: {
+              type: "object",
+              properties: {
+                filePath: { type: "string" },
+              },
+              required: ["filePath"],
+            },
+          },
+          {
+            name: "get_project_structure",
+            description: "获取项目结构",
+            inputSchema: {
+              type: "object",
+              properties: {
+                rootPath: { type: "string" },
+              },
+              required: ["rootPath"],
+            },
+          },
+        ],
+      };
+    });
+
+    // 调用工具
+    this.server.setRequestHandler(
+      CallToolRequestSchema,
+      async (request: CallToolRequest) => {
+        const { name, arguments: args } = request.params;
+
+        try {
+          switch (name) {
+            case "scan_project":
+              return await this.handleScanProject(args);
+            case "analyze_file":
+              return await this.handleAnalyzeFile(args);
+            case "get_project_structure":
+              return await this.handleGetProjectStructure(args);
+            default:
+              throw new Error(`Unknown tool: ${name}`);
+          }
+        } catch (error) {
+          logger.error(`Tool execution failed: ${name}`, error);
+          throw error;
+        }
+      }
+    );
   }
 
-  async getProjectStructure(rootPath: string): Promise<any> {
-    // TODO: 实现获取项目结构逻辑
-    throw new Error("Not implemented");
+  private async handleScanProject(args: any) {
+    const config: ScanConfig = {
+      rootPath: args.rootPath,
+      maxDepth: args.maxDepth || 10,
+      enableAI: args.enableAI || false,
+      ignorePatterns: args.ignorePatterns || [],
+    };
+
+    const result = await this.scanner.scanProject(config);
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(result, null, 2),
+        },
+      ],
+    };
   }
 
-  async getFileAnalysis(filePath: string): Promise<any> {
+  private async handleAnalyzeFile(args: any) {
+    const { filePath } = args;
+
     // TODO: 实现文件分析逻辑
-    throw new Error("Not implemented");
+    const analysis = {
+      path: filePath,
+      type: "unknown",
+      size: 0,
+      analysis: "File analysis not implemented yet",
+    };
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(analysis, null, 2),
+        },
+      ],
+    };
   }
 
-  async watchProject(rootPath: string): Promise<void> {
-    if (this.isWatching) {
-      throw new Error("Already watching a project");
-    }
-    // TODO: 实现项目监听逻辑
-    this.isWatching = true;
+  private async handleGetProjectStructure(args: any) {
+    const { rootPath } = args;
+
+    // TODO: 实现项目结构获取逻辑
+    const structure = {
+      root: rootPath,
+      files: [],
+      directories: [],
+    };
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(structure, null, 2),
+        },
+      ],
+    };
   }
 
-  async stopWatching(): Promise<void> {
-    if (!this.isWatching) {
-      throw new Error("Not currently watching any project");
-    }
-    // TODO: 实现停止监听逻辑
-    this.isWatching = false;
+  async start(): Promise<void> {
+    const transport = new StdioServerTransport();
+    await this.server.connect(transport);
+    logger.info("OctoLens MCP Server started");
   }
 
-  async listPlugins(): Promise<string[]> {
-    // TODO: 实现插件列表逻辑
-    return [];
-  }
-
-  async enablePlugin(name: string): Promise<void> {
-    // TODO: 实现启用插件逻辑
-  }
-
-  async disablePlugin(name: string): Promise<void> {
-    // TODO: 实现禁用插件逻辑
+  async stop(): Promise<void> {
+    await this.server.close();
+    logger.info("OctoLens MCP Server stopped");
   }
 }
 
 // MCP 客户端实现
-export class OctoLensMCPClient implements MCPClient {
+export class OctoLensMCPClient {
+  private client: Client;
+  private transport: StdioClientTransport;
+
   constructor() {
-    // TODO: 初始化 MCP 客户端
+    this.client = new Client({
+      name: "octolens-client",
+      version: "1.0.0",
+    });
+    this.transport = new StdioClientTransport({
+      command: "node",
+      args: [process.argv[1]],
+    });
   }
 
   async connect(): Promise<void> {
-    // TODO: 实现连接逻辑
+    await this.client.connect(this.transport);
+    logger.info("OctoLens MCP Client connected");
   }
 
   async disconnect(): Promise<void> {
-    // TODO: 实现断开连接逻辑
+    await this.client.close();
+    logger.info("OctoLens MCP Client disconnected");
   }
 
-  async request(method: string, params: any): Promise<any> {
-    // TODO: 实现请求逻辑
-    throw new Error("Not implemented");
+  async callTool(name: string, args: any): Promise<any> {
+    const result = await this.client.callTool({
+      name,
+      arguments: args,
+    });
+    return result;
   }
 
-  async notify(method: string, params: any): Promise<void> {
-    // TODO: 实现通知逻辑
+  async listTools(): Promise<Tool[]> {
+    const result = await this.client.listTools({});
+    return result.tools;
   }
+}
+
+// 便捷函数
+export async function createMCPServer(): Promise<OctoLensMCPServer> {
+  const server = new OctoLensMCPServer();
+  await server.start();
+  return server;
+}
+
+export async function createMCPClient(): Promise<OctoLensMCPClient> {
+  const client = new OctoLensMCPClient();
+  await client.connect();
+  return client;
 }

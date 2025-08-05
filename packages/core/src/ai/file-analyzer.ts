@@ -1,7 +1,7 @@
 import type { Runnable } from "@langchain/core/runnables";
-import { chatModel } from "./client";
-import { FileAnalysisResultSchema } from "../types/file-analysis-result";
-import { getFileAnalysisPrompt } from "../prompts/file-analysis";
+import { chatModel } from "./llm-client";
+import { FileAnalysisResultSchema } from "../types/analysis";
+import { getFileAnalysisPrompt } from "../prompts/files";
 
 export const structuredModel: Runnable = chatModel.withStructuredOutput(
   FileAnalysisResultSchema

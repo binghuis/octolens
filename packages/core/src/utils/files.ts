@@ -1,7 +1,7 @@
 import { Transform } from "stream";
 import { readFileSync, createReadStream, statSync } from "fs";
-import { ProjectNode } from "./project-reader";
-import { FILE_PRIORITY_WEIGHTS, AnalysisOptions } from "./default-options";
+import { ProjectNode } from "./project";
+import { FILE_PRIORITY_WEIGHTS, AnalysisOptions } from "./options";
 import { logger } from "./logger";
 
 /**

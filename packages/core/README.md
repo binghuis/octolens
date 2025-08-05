@@ -1,207 +1,256 @@
-# OctoLens Core
+# @octolens/core
 
-OctoLens 的核心功能模块，提供项目结构分析、AI 智能分析和插件系统支持。
+[![npm version](https://badge.fury.io/js/%40octolens%2Fcore.svg)](https://badge.fury.io/js/%40octolens%2Fcore)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
 
-## 项目结构
+A powerful and extensible project analysis tool that provides intelligent insights into codebases using AI-powered analysis.
 
-```
-packages/core/src/
-├── index.ts              # 主入口文件，导出所有公共 API
-├── types/                # 类型定义
-│   ├── index.ts         # 核心类型定义
-│   ├── project-metadata.ts  # 项目元数据类型
-│   └── file-analysis-result.ts  # 文件分析结果类型
-├── config/               # 配置管理
-│   └── index.ts         # 配置验证和默认配置
-├── utils/                # 工具函数
-│   ├── logger.ts        # 日志工具
-│   ├── performance-tracker.ts  # 性能跟踪器
-│   ├── project-reader.ts      # 项目读取器
-│   ├── file-processor.ts      # 文件处理器
-│   └── default-options.ts     # 默认选项配置
-├── ai/                   # AI 功能
-│   ├── client.ts        # AI 客户端
-│   ├── genFileAnalysisResult.ts  # 文件分析生成
-│   └── genProjectMetadata.ts     # 项目元数据生成
-├── plugins/              # 插件系统
-│   └── index.ts         # 插件管理器和接口
-├── mcp/                  # MCP 协议
-│   └── index.ts         # MCP 服务器和客户端实现
-├── prompts/              # AI 提示词
-│   ├── file-analysis.ts # 文件分析提示词
-│   └── project-analysis.ts  # 项目分析提示词
-└── scanner.ts            # 核心扫描器
+## Features
+
+- 🔍 **Smart Project Scanning**: Efficiently analyze project structure and dependencies
+- 🤖 **AI-Powered Analysis**: Get intelligent insights about your codebase
+- 🔌 **Plugin System**: Extensible architecture for custom analysis
+- 📊 **Performance Tracking**: Monitor analysis performance and optimize
+- 🎯 **Type Safety**: Full TypeScript support with comprehensive types
+- ⚡ **High Performance**: Optimized for large codebases
+
+## Installation
+
+```bash
+npm install @octolens/core
 ```
 
-## 核心功能
-
-### 1. 类型系统 (`types/`)
-
-- **统一类型定义**: 所有核心类型在 `types/index.ts` 中定义
-- **类型安全**: 使用 Zod 进行运行时类型验证
-- **模块化**: 按功能分离类型定义
-
-### 2. 配置管理 (`config/`)
-
-- **配置验证**: 使用 Zod Schema 验证配置
-- **默认配置**: 提供合理的默认值
-- **类型安全**: 配置对象具有完整的类型定义
-
-### 3. 工具函数 (`utils/`)
-
-- **日志系统**: 统一的日志记录
-- **性能跟踪**: 详细的性能监控
-- **文件处理**: 高效的文件读取和处理
-- **项目读取**: 项目结构分析
-
-### 4. AI 功能 (`ai/`)
-
-- **AI 客户端**: 支持多种 AI 提供商
-- **结构化输出**: 使用 LangChain 生成结构化结果
-- **提示词管理**: 统一的提示词模板
-
-### 5. 插件系统 (`plugins/`)
-
-- **插件接口**: 标准化的插件接口
-- **插件管理器**: 统一的插件注册和管理
-- **优先级系统**: 支持插件优先级排序
-
-### 6. MCP 协议 (`mcp/`)
-
-- **协议实现**: Model Context Protocol 实现
-- **服务器端**: 提供 MCP 服务
-- **客户端**: MCP 客户端实现
-
-### 7. 核心扫描器 (`scanner.ts`)
-
-- **统一入口**: 整合所有功能的扫描器
-- **配置驱动**: 支持灵活的配置选项
-- **性能优化**: 批量处理和并发控制
-
-## 使用示例
-
-### 基本使用
+## Quick Start
 
 ```typescript
 import { OctoLensScanner } from "@octolens/core";
 
 const scanner = new OctoLensScanner({
   rootPath: "./my-project",
+  maxDepth: 10,
+  enableAI: true,
+  ignorePatterns: ["node_modules", "dist"],
+});
+
+const result = await scanner.scan();
+console.log("Analysis complete:", result);
+```
+
+## API Reference
+
+### OctoLensScanner
+
+The main scanner class for project analysis.
+
+#### Constructor
+
+```typescript
+new OctoLensScanner(config: ScanConfig)
+```
+
+#### Configuration
+
+```typescript
+interface ScanConfig {
+  rootPath: string; // Project root directory
+  maxDepth: number; // Maximum directory depth
+  enableAI: boolean; // Enable AI analysis
+  ignorePatterns: string[]; // Patterns to ignore
+  aiConfig?: AIConfig; // AI provider configuration
+  enableWatch?: boolean; // Enable file watching
+}
+```
+
+#### Methods
+
+- `scan()`: Perform project analysis
+- `getStatus()`: Get current scanner status
+- `getProgress()`: Get analysis progress
+- `stop()`: Stop ongoing analysis
+- `reset()`: Reset scanner state
+
+### Plugin System
+
+Create custom analysis plugins:
+
+```typescript
+import { Plugin } from "@octolens/core";
+
+class MyPlugin implements Plugin {
+  name = "my-plugin";
+  version = "1.0.0";
+  description = "Custom analysis plugin";
+  priority = 1;
+
+  canHandle(path: string): boolean {
+    return path.endsWith(".myext");
+  }
+
+  async analyzeFile(path: string, content: string) {
+    // Custom analysis logic
+    return {
+      /* analysis result */
+    };
+  }
+}
+
+// Register plugin
+import { pluginManager } from "@octolens/core";
+pluginManager.register(new MyPlugin());
+```
+
+## Configuration
+
+### Basic Configuration
+
+```typescript
+const config = {
+  rootPath: "./my-project",
+  maxDepth: 10,
+  enableAI: true,
+  ignorePatterns: ["node_modules", "dist", ".git"],
+};
+```
+
+### AI Configuration
+
+```typescript
+const config = {
+  // ... basic config
+  aiConfig: {
+    provider: "deepseek",
+    model: "deepseek-chat",
+    apiKey: process.env.DEEPSEEK_API_KEY,
+    temperature: 0.1,
+  },
+};
+```
+
+## Examples
+
+### Basic Project Analysis
+
+```typescript
+import { OctoLensScanner } from "@octolens/core";
+
+const scanner = new OctoLensScanner({
+  rootPath: "./my-project",
+  maxDepth: 5,
+  enableAI: false,
+});
+
+const result = await scanner.scan();
+console.log(
+  `Found ${result.fileCount} files in ${result.directoryCount} directories`
+);
+```
+
+### AI-Powered Analysis
+
+```typescript
+import { OctoLensScanner } from "@octolens/core";
+
+const scanner = new OctoLensScanner({
+  rootPath: "./my-project",
+  maxDepth: 10,
   enableAI: true,
   aiConfig: {
-    provider: "ollama",
-    model: "llama3.2",
+    provider: "deepseek",
+    model: "deepseek-chat",
+    apiKey: process.env.DEEPSEEK_API_KEY,
   },
 });
 
-const result = await scanner.scanProject();
-console.log(result);
+const result = await scanner.scan();
+console.log(
+  "AI Analysis:",
+  result.files.map((f) => f.aiAnalysis)
+);
 ```
 
-### 使用插件
+### Custom Plugin
 
 ```typescript
-import { pluginManager } from "@octolens/core";
+import { Plugin, pluginManager } from "@octolens/core";
 
-// 注册插件
-pluginManager.register({
-  name: "my-plugin",
-  version: "1.0.0",
-  description: "自定义插件",
-  priority: 100,
-  canHandle: (path) => path.endsWith(".my"),
-  analyzeFile: async (path, content) => {
-    // 自定义分析逻辑
+class ReactPlugin implements Plugin {
+  name = "react-analyzer";
+  version = "1.0.0";
+  description = "React-specific analysis";
+  priority = 2;
+
+  canHandle(path: string): boolean {
+    return path.endsWith(".jsx") || path.endsWith(".tsx");
+  }
+
+  async analyzeFile(path: string, content: string) {
+    const hooks = (content.match(/use[A-Z][a-zA-Z]*/g) || []).length;
+    const components = (content.match(/function\s+[A-Z][a-zA-Z]*/g) || [])
+      .length;
+
     return {
-      /* 分析结果 */
+      path,
+      hooks,
+      components,
+      summary: `Contains ${hooks} hooks and ${components} components`,
     };
-  },
-});
+  }
+}
+
+pluginManager.register(new ReactPlugin());
 ```
 
-### 配置验证
+## Architecture
 
-```typescript
-import { validateConfig } from "@octolens/core";
+The library follows a modular architecture:
 
-const config = validateConfig({
-  rootPath: "./project",
-  maxDepth: 5,
-  enableAI: true,
-});
-```
+- **Scanner**: Core analysis engine
+- **Plugins**: Extensible analysis system
+- **AI**: AI-powered insights
+- **Utils**: Utility functions and helpers
+- **Types**: Comprehensive TypeScript definitions
 
-## API 文档
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed architecture information.
 
-### 核心类型
+## Contributing
 
-- `ScanConfig`: 扫描配置
-- `ScanResult`: 扫描结果
-- `ProjectMetadata`: 项目元数据
-- `FileAnalysisResult`: 文件分析结果
+We welcome contributions! Please see our [Contributing Guide](../../CONTRIBUTING.md) for details.
 
-### 主要类
-
-- `OctoLensScanner`: 核心扫描器
-- `PluginManager`: 插件管理器
-- `PerformanceTracker`: 性能跟踪器
-
-### 工具函数
-
-- `validateConfig()`: 配置验证
-- `getProjectMetadata()`: 获取项目元数据
-- `analyzeProjectStructure()`: 分析项目结构
-
-## 开发指南
-
-### 添加新功能
-
-1. 在相应的目录下创建新文件
-2. 在 `index.ts` 中导出新功能
-3. 添加类型定义到 `types/`
-4. 更新文档
-
-### 插件开发
-
-1. 实现 `Plugin` 接口
-2. 使用 `pluginManager.register()` 注册插件
-3. 实现必要的生命周期方法
-
-### 测试
+### Development Setup
 
 ```bash
-# 运行测试
-pnpm test
+# Clone the repository
+git clone https://github.com/octolens/structor.git
 
-# 类型检查
-pnpm type-check
+# Install dependencies
+pnpm install
 
-# 构建
+# Build the core package
 pnpm build
+
+# Run tests
+pnpm test
 ```
 
-## 依赖关系
+### Code Style
 
-### 内部依赖
+- Use TypeScript for all new code
+- Follow existing code style and patterns
+- Add comprehensive tests
+- Update documentation for new features
 
-- `types/` → 所有模块的基础类型
-- `config/` → 被 `scanner.ts` 使用
-- `utils/` → 被所有模块使用
-- `ai/` → 被 `scanner.ts` 使用
-- `plugins/` → 被 `scanner.ts` 使用
-- `mcp/` → 独立模块，可选择性使用
+## License
 
-### 外部依赖
+MIT License - see [LICENSE](../../LICENSE) for details.
 
-- `zod`: 类型验证
-- `@langchain/deepseek`: AI 模型
-- `directory-tree`: 目录树生成
-- `ignore`: 文件忽略规则
+## Support
 
-## 注意事项
+- 📖 [Documentation](https://octolens.dev)
+- 🐛 [Issue Tracker](https://github.com/octolens/structor/issues)
+- 💬 [Discussions](https://github.com/octolens/structor/discussions)
+- 📧 [Email Support](mailto:support@octolens.dev)
 
-1. **类型安全**: 所有公共 API 都有完整的类型定义
-2. **错误处理**: 所有异步操作都有适当的错误处理
-3. **性能**: 使用批量处理和并发控制优化性能
-4. **可扩展性**: 插件系统支持功能扩展
-5. **配置**: 支持灵活的配置选项
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for version history and changes.
